@@ -50,7 +50,7 @@ app.get("/listings/:id", wrapAsync(async (req, res) => {
 // Create Route
 app.post("/listings", wrapAsync( async (req, res) => {
     if(!req.body.listing){
-        throw new ExpressError(400,"Send Valid data Listings!!!");
+        throw new ExpressError(400,"Send Valid data Listings!!");
     }
     const newListing = new Listing(req.body.listing);
     await newListing.save();
