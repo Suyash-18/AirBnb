@@ -9,28 +9,43 @@
 <body>
     <br>
     <div class="row">
-        <div class="col-8 offset-2">
-            <h3>Listing Details:</h3>
+        <div class="col-8 offset-3">
+            <h3><%= listing.title %></h3>
         </div>
 
-            <div class="card col-6 offset-2" >
+            <div class="card col-6 offset-3" >
                 <img src="<%= listing.image %>" class="card-img-top show-img" alt="...">
                 <div class="card-body">
-                  <p class="card-text"><b><%= listing.title %></b><br>
+                  <p class="card-text">
                     <%= listing.description %> <br> &#8377; <%= listing.price.toLocaleString("en-in") %> <br>
                     <%= listing.location %> <br> <%= listing.country %>
                 </p>
                 </div>
               </div>
-            <br>
         </div>
-        <div class="row offset-2 btns" >
+        <div class="row offset-3 btns" >
             <button class="btn btn-dark col-1 form-btn"><a href="/listings/<%= listing._id %>/edit" style="text-decoration: none; color: white;" >Edit</a></button>
             <form action="/listings/<%= listing._id %>?_method=DELETE" method="post" class="col-1">
                 <button class="btn btn-dark ">Delete</button>
             </form>
             <br>
         </div>
+<hr>
+       <div class="col-8 offset-3 mb-3">
+        <h4>Leave a Review</h4>
+        <form action="/listings/<%= listing._id %>/review" method="post">
+            <div class="mt-3 mb-3">
+                <label for="rating" class="form-lable">Rating</label>
+                <input type="range" name="review[rating]" id="rating" min="1" max="5" class="form-range">
+            </div>
+            <div class="mt-3 mb-3">
+                <label for="comment" class="form-lable">Comments</label>
+                <br>
+                <textarea name="review[comment]" id="comment" rows="5" placeholder="Leave a Comment..." class="form-control"></textarea>
+            </div>
+            <button type="submit" class="btn btn-outline-dark">Submit</button>
+        </form>
+       </div>
     
 </body>
 <!-- </html> -->
