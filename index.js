@@ -1,14 +1,13 @@
 const express = require('express');
 const app  = express();
 const mongoose = require('mongoose');
-const Listing = require("./models/listing.js");
 const path = require("path");
 const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const {listingSchema, reviewSchema} = require("./schema.js");
-const Review = require("./models/review.js");
+const listings = require("./routes/listing.js");
+const review = require("./routes/review.js");
 
 let port = 8080;
 
@@ -31,106 +30,15 @@ async function main(){
     await mongoose.connect(mongoUrl);
 }
 
-let validatListing = (req, res, next)=> {
-    let {error} = listingSchema.validate(req.body);
-    if(error){
-        let errmsg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(400 , errmsg);
-    }else{
-        next();
-    }
-}
-let validatReview = (req, res, next)=> {
-    let {error} = reviewSchema.validate(req.body);
-    if(error){
-        let errmsg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(400 , errmsg);
-    }else{
-        next();
-    }
-}
+
 
 app.get("/", wrapAsync((req, res) => {
     res.send("Heeyyyy!");
 }));
-// Index Route
-app.get("/listings", wrapAsync( async (req, res) => {
-    let allListings = await Listing.find({});
-    res.render("./listings/index.ejs", {allListings});
-}));
-// New Route
-app.get("/listings/new" ,wrapAsync( (req,res) => {
-    res.render("./listings/new.ejs");
-}));
-// Show Rout
-app.get("/listings/:id", wrapAsync(async (req, res) => {
-    let {id} = req.params;
-    let listing = await Listing.findById(id).populate("reviews");
-    res.render("./listings/show.ejs", {listing});
-}));
-// Create Route
-app.post("/listings", validatListing ,wrapAsync( async (req, res) => {
-    // if(!req.body.listing){
-    //     throw new ExpressError(400,"Send Valid data Listings!!");
-    // }
-    
-    const newListing = new Listing(req.body.listing);
-    await newListing.save();
-    res.redirect("./listings");
-}));
-//Edit Route
-app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
-    let {id} = req.params;
-    const listing = await Listing.findById(id);
-    res.render("./listings/edit.ejs", {listing});
-}));
-// Update Route
-app.put("/listings/:id", validatListing , wrapAsync(async (req,res) => {
-    let {id} = req.params;
-    const listing = await Listing.findByIdAndUpdate(id, {...req.body.listing});
-    res.redirect(`/listings/${id}`);
-}));
-// Delete Route
-app.delete("/listings/:id", wrapAsync(async (req,res) => {
-    let {id} = req.params;
-    const deletedListing = await Listing.findByIdAndDelete(id);
-    res.redirect(`/listings`);
-}));
 
-// Review Create Route
-app.post("/listings/:id/review", validatReview, wrapAsync(async (req, res) => {
-    let listing = await Listing.findById(req.params.id);
-    let newReview = new Review(req.body.review);
-    console.log(newReview);
-    listing.reviews.push(newReview);
-    
-    await newReview.save();
-    await listing.save();
-    console.log(listing);
-    res.redirect(`/listings/${listing.id}`);
-}));
+app.use("/listings", listings);
+app.use("/listings/:id/review", review);
 
-//Delete Review
-app.delete("/listings/:id/review/:reviewId", wrapAsync(async (req, res) => {
-    let {id, reviewId} = req.params;
-    await Listing.findByIdAndUpdate(id, {$pull: {reviews: reviewId}});
-    await Review.findByIdAndDelete(reviewId);
-
-    res.redirect(`/listings/${id}`);
-}));
-
-// app.get("/testlist",async (req, res) => {
-//     let sample = new Listing({
-//         title : "Villa",
-//         description: "By the beach",
-//         price: 1200,
-//         location: "Calangute, Goa",
-//         country: "India",
-//     });
-//     await sample.save();
-//     console.log("Sample saved");
-//     res.send("Successful testing!!");
-// });
 
 app.all("*", (req, res, next) => {
     next(new ExpressError(404,"Page Not Found."))
