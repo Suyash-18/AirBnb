@@ -8,15 +8,28 @@ const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const listings = require("./routes/listing.js");
 const review = require("./routes/review.js");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const flash = require("connect-flash");
+
 
 let port = 8080;
+
+const sessionOption = {
+    secret: "thisismydirtylittlesecrete",
+    resave: false,
+    saveUninitialized: true,
+}
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
-app.use(express.static(path.join(__dirname, "public")))
+app.use(express.static(path.join(__dirname, "public")));
+app.use(cookieParser());
+app.use(session(sessionOption));
+app.use(flash());
 
 const mongoUrl = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -33,8 +46,15 @@ async function main(){
 
 
 app.get("/", wrapAsync((req, res) => {
+    res.cookie("hi from name", "hello from value")
     res.send("Heeyyyy!");
 }));
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
+});
 
 app.use("/listings", listings);
 app.use("/listings/:id/review", review);
