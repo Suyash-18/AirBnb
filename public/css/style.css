@@ -4,6 +4,16 @@ body{
     display: flex;
     flex-direction: column;
 }
+body::-webkit-scrollbar{
+    width: 10px;
+}
+::-webkit-scrollbar-track{
+    inset: 0 0 5px #ad0b0b;
+}
+::-webkit-scrollbar-thumb{
+    background: #0000008c;
+    border-radius: 10px;
+}
 
 .container{
     flex: 1;
