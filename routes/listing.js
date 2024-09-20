@@ -23,7 +23,7 @@ router.get("/new" ,isLoggedin,wrapAsync( listingController.renderNewForm ));
 
 router.route("/:id")
 .get(wrapAsync( listingController.showListings ))
-.put(isLoggedin, isOwner,validatListing , wrapAsync( listingController.updateListings ))
+.put(isLoggedin, isOwner, upload.single('listing[image]'),validatListing , wrapAsync( listingController.updateListings ))
 .delete(isLoggedin, isOwner,wrapAsync( listingController.destroyListings ));
 //Edit Route
 router.get("/:id/edit", isLoggedin, isOwner,wrapAsync( listingController.renderEditForm ));
