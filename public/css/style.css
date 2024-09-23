@@ -102,3 +102,8 @@ body::-webkit-scrollbar{
 .btns{
     display: flex !important;
 }
+
+#map{
+    height: 250px;
+    width: 47vw;
+}
