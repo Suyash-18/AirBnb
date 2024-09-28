@@ -45,10 +45,10 @@ async function main(){
 
 
 
-app.get("/", wrapAsync((req, res) => {
-    res.cookie("hi from name", "hello from value")
-    res.send("Heeyyyy!");
-}));
+// app.get("/", wrapAsync((req, res) => {
+//     res.cookie("hi from name", "hello from value")
+//     res.send("Heeyyyy!");
+// }));
 
 app.use(cookieParser());
 app.use(session(sessionOption));
