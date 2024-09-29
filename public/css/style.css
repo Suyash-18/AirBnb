@@ -107,3 +107,51 @@ body::-webkit-scrollbar{
     height: 250px;
     width: 47vw;
 }
+
+.filters{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.filter{
+    margin-right: 2.5rem;
+    text-align: center;
+    opacity: 0.7;
+}
+.filter:hover{
+    opacity: 1;
+    cursor: pointer;
+}
+.filter i{
+    font-size: 1.7rem;
+}
+.filter p{
+    font-size: 1rem;
+}
+.tax-info{
+    display: none;
+}
+.tax-toggler{
+    border: #19181873 solid 2px;
+    border-radius: 15px;
+    padding: 10px;
+    height: 3rem;
+}
+.search-btn{
+    background-color: #fe424d !important;
+    color: #fff !important;
+    padding: 0 1rem 0 1rem;
+    border-radius: 3rem !important;
+}
+.search-btn:hover{
+    background-color: #fe424d;
+    color: #fff;
+}
+.search-btn i{
+    display: inline;
+    margin-right: 0.5rem;
+}
+.search-input{
+    border-radius: 3rem !important;
+    padding: 0.5rem 3rem 0.5rem 3rem !important;
+}

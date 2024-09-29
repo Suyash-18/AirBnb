@@ -11,6 +11,7 @@ const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const MongoStore = require('connect-mongo');
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -18,11 +19,6 @@ const User = require("./models/user.js");
 
 let port = 8080;
 
-const sessionOption = {
-    secret: "thisismydirtylittlesecrete",
-    resave: false,
-    saveUninitialized: true,
-}
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -31,7 +27,26 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "public")));
 
-const mongoUrl = "mongodb://127.0.0.1:27017/wanderlust";
+const dbUrl = process.env.ATLASDB_URL;
+
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    crypto: {
+        secret: process.env.SESSION_SECRETE,       
+    },
+    touchAfter: 24 * 3600,
+})
+
+store.on("error", () => {
+    console.log("Error in Mongo Session Store", err);
+})
+
+const sessionOption = {
+    store,
+    secret: process.env.SESSION_SECRETE,
+    resave: false,
+    saveUninitialized: true,
+}
 
 main().then(() => {
     console.log("Connected Successfully!!");
@@ -40,7 +55,7 @@ main().then(() => {
 })
 
 async function main(){
-    await mongoose.connect(mongoUrl);
+    await mongoose.connect(dbUrl);
 }
 
 
@@ -49,6 +64,7 @@ async function main(){
 //     res.cookie("hi from name", "hello from value")
 //     res.send("Heeyyyy!");
 // }));
+
 
 app.use(cookieParser());
 app.use(session(sessionOption));
