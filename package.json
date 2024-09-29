@@ -1,5 +1,5 @@
 {
-  "engines":{
+  "engines": {
     "node": "20.11.0"
   },
   "name": "airbnb-project",
